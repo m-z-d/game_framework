@@ -1,7 +1,7 @@
-from math import *
+from math import * # pyright: reportWildcardImportFromLibrary=false 
+  # yes it's a wildcard import but math is a limited library and the functions are standard
 from dataclasses import dataclass
 from typing import Literal,Callable,Any,NoReturn
-import msvcrt
 from threading import Thread
 from sys import platform
 from logging import log as l,basicConfig,INFO,WARNING,DEBUG
@@ -47,9 +47,12 @@ class KeyboardInputAgent():
             elif self.mode=='sequence':
                 input=self._seq_input()
             else: raise
-    def _seq_input(self) -> str:return ""
-    def _sk_input_windows(self) -> str:return ""
-    def _sk_input_linux(self) -> str:return ""
+    def _seq_input(self) -> str:return input()
+    def _sk_input_windows(self) -> str:
+        from msvcrt import getch
+        return getch().decode(encoding="ascii",errors="ignore")
+    def _sk_input_linux(self) -> str:  #TODO: make and verify this code on a linux install
+        return ""
 
     def init(self) -> None:
         """start listening for input on command line, also checks which OS it is run on and uses appropriate method of input"""
