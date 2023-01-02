@@ -7,6 +7,5 @@ class GUIElement():
     def __init__(self,name:str,sprite) -> None:
         self.name: str=name
 
-    def append_child(self,element:GUIElement):
+    def append_child(self,element):
         element.parent=self
-        element.
