@@ -1,11 +1,27 @@
+from typing import Any, Literal
+from rendering_pipeline import Sprite
 from input_pipeline import KeyboardInputAgent
-
-class GUIRoot:
-    def __init__(self) -> None:
-        self.styling=""
 class GUIElement():
-    def __init__(self,name:str,sprite) -> None:
+    def __init__(self,parent,name:str,sprite:Sprite,pos:tuple[int,int]) -> None:
         self.name: str=name
-
+        self.position:tuple[int,int]=pos
+        parent.append_child(self)
+        self._absolute_position: tuple[int,int]=parent.get_absolute_pos(self)
+        self.children:list[GUIElement]=[]
     def append_child(self,element):
         element.parent=self
+    def get_absolute_pos(self,child:Any) -> tuple[int, int]:
+        if child in self.children:
+            return tuple(
+                [a+b for a,b in zip(
+                    self._absolute_position,child.position
+                    )
+                ]
+            )  
+        else:
+            raise ValueError
+class GUIRoot(GUIElement):
+    def __init__(self,parent,name:str,sprite:Sprite,pos:tuple[int,int]) -> None:
+        super().__init__(parent,name,sprite,pos)
+        self._absolute_position: tuple[int,int]=(0,0)
+        self.styling=""
