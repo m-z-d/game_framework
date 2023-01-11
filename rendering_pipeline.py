@@ -23,3 +23,5 @@ class Renderer():
     
     def rendering_loop(self):
         pass
+class Sprite:
+    pass
