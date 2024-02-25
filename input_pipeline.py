@@ -1,7 +1,5 @@
-from math import * # pyright: reportWildcardImportFromLibrary=false 
-  # yes it's a wildcard import but math is a limited library and the functions are standard
 from dataclasses import dataclass
-from typing import Literal,Callable,Any,NoReturn
+from typing import Literal,Callable,Any
 from threading import Thread
 from sys import platform
 from logging import log as l,basicConfig,INFO,WARNING,DEBUG
