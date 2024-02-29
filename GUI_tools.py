@@ -17,7 +17,18 @@ class PositionVector:
 
     def copy(self):
         return PositionVector(self.x, self.y)
-
+    def scale(self, value: "PositionVector |tuple[int,int]") -> "PositionVector":
+        """returns Hadamard product of the 2 vectors. (multiplies each component of vectors together)"""
+        result_vector: PositionVector = self.copy()
+        if isinstance(value, tuple):
+            result_vector.x *= value[0]
+            result_vector.y *= value[1]
+        elif type(value) == type(self):
+            result_vector.x *= value.x
+            result_vector.y *= value.y
+        else:
+            raise ValueError
+        return result_vector
     def __len__(self) -> float:
         """Returns vector length"""
         return (self.x**2 + self.y**2) ** 0.5
