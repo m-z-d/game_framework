@@ -60,8 +60,8 @@ class PositionVector:
         "Returns value*self ; for vector multiplication, works as a dot product."
         result_vector: PositionVector = self.copy()
         if isinstance(value, (float, int)):
-            result_vector.x *= value
-            result_vector.y *= value
+            result_vector.x = round(result_vector.x * value)
+            result_vector.y = round(result_vector.y * value)
             return result_vector  # scalar product
         else:
             if isinstance(value, tuple):
