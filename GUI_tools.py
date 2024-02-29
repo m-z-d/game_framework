@@ -2,21 +2,28 @@ from typing import Any, Literal
 from rendering_pipeline import Sprite
 from input_pipeline import KeyboardInputAgent
 
+
 class PositionVector:
+    x:int
+    y:int
     def __init__(
         self,
         x: int | None = None,
         y: int | None = None,
-        xy: tuple[int, int] | None = None,
+        xy: "tuple[int, int] | PositionVector |None " = None,
     ) -> None:
-        """Creates a position vector from a tuple of integers or 2 integer parameters."""
+        """Creates a position vector from a tuple of integers, another PositionVector or from 2 integer parameters."""
         if xy is not None:
-            self.x, self.y = xy
+            if isinstance(xy,tuple):
+                self.x, self.y = xy
+            else:
+                self.x, self.y = xy.x,xy.y
         elif x is not None and y is not None:
             self.x, self.y = x, y
 
     def copy(self):
         return PositionVector(self.x, self.y)
+
     def scale(self, value: "PositionVector |tuple[int,int]") -> "PositionVector":
         """returns Hadamard product of the 2 vectors. (multiplies each component of vectors together)"""
         result_vector: PositionVector = self.copy()
@@ -29,6 +36,7 @@ class PositionVector:
         else:
             raise ValueError
         return result_vector
+
     def __len__(self) -> float:
         """Returns vector length"""
         return (self.x**2 + self.y**2) ** 0.5
@@ -62,12 +70,15 @@ class PositionVector:
                 return self.x * value.x + self.y * value.y  # dot product
             else:
                 raise ValueError
+
     def __radd__(self, value: "PositionVector |tuple[int,int]") -> "PositionVector":
         return self.__add__(value)
+
     def __mul__(
         self, value: "float |PositionVector |tuple[int,int]"
     ) -> "PositionVector|float":
         return self.__rmul__(value)
+
 
 class GUIElement:
     def __init__(self, parent, name: str, sprite: Sprite, pos: tuple[int, int]) -> None:
