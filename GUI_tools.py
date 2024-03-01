@@ -4,8 +4,9 @@ from input_pipeline import KeyboardInputAgent
 
 
 class PositionVector:
-    x:int
-    y:int
+    x: int
+    y: int
+
     def __init__(
         self,
         x: int | None = None,
@@ -14,10 +15,10 @@ class PositionVector:
     ) -> None:
         """Creates a position vector from a tuple of integers, another PositionVector or from 2 integer parameters."""
         if xy is not None:
-            if isinstance(xy,tuple):
+            if isinstance(xy, tuple):
                 self.x, self.y = xy
             else:
-                self.x, self.y = xy.x,xy.y
+                self.x, self.y = xy.x, xy.y
         elif x is not None and y is not None:
             self.x, self.y = x, y
 
@@ -81,25 +82,33 @@ class PositionVector:
 
 
 class GUIElement:
-    def __init__(self, parent, name: str, sprite: Sprite, pos: tuple[int, int]|PositionVector) -> None:
+    def __init__(
+        self,
+        parent,
+        name: str,
+        sprite: Sprite | None,
+        pos: tuple[int, int] | PositionVector,
+    ) -> None:
         self.name: str = name
         self.position: PositionVector = PositionVector(xy=pos)
         parent.append_child(self)
-        self._absolute_position:PositionVector= parent.get_absolute_pos(self)
+        self._absolute_position: PositionVector = parent.get_absolute_pos(self)
         self.children: list[GUIElement] = []
+        self.sprite: Sprite | None = sprite
+        self.sprite_nonexistent: bool = sprite is None
 
     def append_child(self, element):
         element.parent = self
 
     def get_absolute_pos(self, child: "GUIElement") -> PositionVector:
         if child in self.children:
-            return self._absolute_position+child.position
+            return self._absolute_position + child.position
+        elif child == self:
+            return PositionVector(0, 0)
         else:
             raise ValueError
 
 
 class GUIRoot(GUIElement):
-    def __init__(self, parent, name: str, sprite: Sprite, pos: tuple[int, int]) -> None:
-        super().__init__(parent, name, sprite, pos)
-        self._absolute_position: tuple[int, int] = (0, 0)
-        self.styling = ""
+    def __init__(self, name: str) -> None:
+        super().__init__(parent=self, name=name, sprite=None,pos=(0,0))
