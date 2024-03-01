@@ -81,26 +81,19 @@ class PositionVector:
 
 
 class GUIElement:
-    def __init__(self, parent, name: str, sprite: Sprite, pos: tuple[int, int]) -> None:
+    def __init__(self, parent, name: str, sprite: Sprite, pos: tuple[int, int]|PositionVector) -> None:
         self.name: str = name
-        self.position: tuple[int, int] = pos
+        self.position: PositionVector = PositionVector(xy=pos)
         parent.append_child(self)
-        self._absolute_position: tuple[int, int] = parent.get_absolute_pos(self)
+        self._absolute_position:PositionVector= parent.get_absolute_pos(self)
         self.children: list[GUIElement] = []
 
     def append_child(self, element):
         element.parent = self
 
-    def get_absolute_pos(self, child: "GUIElement") -> tuple[int, int]:
+    def get_absolute_pos(self, child: "GUIElement") -> PositionVector:
         if child in self.children:
-            return tuple(
-                [
-                    a + b
-                    for a, b in zip(
-                        self._absolute_position, child.position  # TODO: Rewrite
-                    )
-                ]
-            )
+            return self._absolute_position+child.position
         else:
             raise ValueError
 
