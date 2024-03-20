@@ -8,7 +8,9 @@ basicConfig(filename="input_debug.log")
 @dataclass
 class EventObject:
     value:str
-class KeyboardInputAgent():
+class KeyboardInputAgent(): #TODO: make sequenced mode only accessible by sending an event to the agent.
+    """Interface for user input.  
+    functions as either single-key (Real Time) or sequenced input (buffered)"""
     def __init__(self,starting_mode:Literal["single-key","sequence"]="single-key") -> None:
         self._sk_input:Callable[[],str]
         self.thread: Thread=Thread(target=self._loop,daemon=True)
@@ -28,15 +30,13 @@ class KeyboardInputAgent():
         `event`'s realisation with x as `EventObject`"""
         self._event_listeners[event].append(function)
     def get_listeners(self,event:Literal["InputEvent","SingleKeyEvent","SequenceEvent"]) ->list[Callable[[EventObject],Any]]:
-        """Gets all functions `f(x)` from  
-        the list of functions that will be called at  
-        `event`'s realisation"""
+        """Gets all functions currently listening to `event`'s realisation"""
         return self._event_listeners[event]
     def remove_listener(self,event:Literal["InputEvent","SingleKeyEvent","SequenceEvent"],function:Callable[[EventObject],Any]):
         """Removes a function `f(x)` from  
-        the list of functions listening to `event`'s realisation"""
-        try:self._event_listeners[event].remove(function)
-        except ValueError:pass
+        the list of functions listening to `event`'s realisation. Raises errors if function or event is nonexistent."""
+        assert event in self._event_listeners
+        self._event_listeners[event].remove(function)
 
     def _loop(self) -> None:
         while True:
@@ -50,7 +50,7 @@ class KeyboardInputAgent():
         from msvcrt import getch
         return getch().decode(encoding="ascii",errors="ignore")
     def _sk_input_linux(self) -> str:  #TODO: make and verify this code on a linux install
-        return ""
+        raise NotImplementedError
 
     def init(self) -> None:
         """start listening for input on command line, also checks which OS it is run on and uses appropriate method of input"""
@@ -65,7 +65,3 @@ class KeyboardInputAgent():
             l(level=INFO,msg="input:daemon starting,configured for 'linux' platform")
             self._sk_input=self._sk_input_linux
         self.thread.start()
-
-
-
-a=KeyboardInputAgent()
