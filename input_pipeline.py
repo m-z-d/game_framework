@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal, Callable, Any
 from threading import Thread
 from sys import platform
@@ -12,7 +12,7 @@ class EventObject:
     """Base event class, inherited by all event types"""
 
     value: str
-    extra_arguments: list = []
+    extra_arguments: list = field(default_factory=list) 
 
 
 class InputEvent(EventObject):
