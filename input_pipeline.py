@@ -9,7 +9,23 @@ basicConfig(filename="input_debug.log")
 
 @dataclass
 class EventObject:
+    """Base event class, inherited by all event types"""
+
     value: str
+    extra_arguments: list = []
+
+
+class InputEvent(EventObject):
+    """Class for input events. used with `KeyboardInputAgent`.\n
+    the event's `value` is the input characters.\n
+    the event's `extra_arguments` should be empty when triggered by a `KeyboardInputAgent`.\n
+    the event's `input_type` is the context to determine how an event should be handled. 
+    Most useful when a function is set to listen to more than one type of `InputEvent`
+    """
+
+    input_type: Literal[
+        "InputEvent", "SingleKeyEvent", "SequenceEvent", "SpecialEvent"
+    ] = "InputEvent"
 
 
 class KeyboardInputAgent:  # TODO: make sequenced mode only accessible by sending an event to the agent.
@@ -62,20 +78,21 @@ class KeyboardInputAgent:  # TODO: make sequenced mode only accessible by sendin
 
     def _loop(self) -> None:
         while True:
-            input=""
+            input = ""
             if self.mode == "single-key":
-                input =self._sk_input()
+                input = self._sk_input()
                 if input is "":
                     continue
                 else:
                     for listener in self._event_listeners["SingleKeyEvent"]:
-                        listener(EventObject(value=input))
+                        listener(InputEvent(value=input))
             elif self.mode == "sequence":
                 input = self._seq_input()
                 for listener in self._event_listeners["SequenceEvent"]:
-                    listener(EventObject(value=input))
+                    listener(InputEvent(value=input))
             for listener in self._event_listeners["InputEvent"]:
-                    listener(EventObject(value=input))
+                listener(InputEvent(value=input))
+
     def _seq_input(self) -> str:
         return input()
 
