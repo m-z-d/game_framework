@@ -39,7 +39,7 @@ class KeyboardInputAgent:  # TODO: make sequenced mode only accessible by sendin
         self.thread: Thread = Thread(target=self._loop, daemon=True)
         self.input_cache: list[str] = []
         self.mode = starting_mode
-        self._event_listeners: dict[str, list[Callable[[EventObject], Any]]] = {
+        self._event_listeners: dict[str, list[Callable[[InputEvent], Any]]] = {
             "InputEvent": [],
             "SingleKeyEvent": [],
             "SequenceEvent": [],
@@ -52,23 +52,23 @@ class KeyboardInputAgent:  # TODO: make sequenced mode only accessible by sendin
     def add_listener(
         self,
         event: Literal["InputEvent", "SingleKeyEvent", "SequenceEvent"],
-        function: Callable[[EventObject], Any],
+        function: Callable[[InputEvent], Any],
     ):
         """Adds a function `f(x)` to
         the list of functions that will be called at
-        `event`'s realisation with x as `EventObject`"""
+        `event`'s realisation with x as `InputEvent`"""
         self._event_listeners[event].append(function)
 
     def get_listeners(
         self, event: Literal["InputEvent", "SingleKeyEvent", "SequenceEvent"]
-    ) -> list[Callable[[EventObject], Any]]:
+    ) -> list[Callable[[InputEvent], Any]]:
         """Gets all functions currently listening to `event`'s realisation"""
         return self._event_listeners[event]
 
     def remove_listener(
         self,
         event: Literal["InputEvent", "SingleKeyEvent", "SequenceEvent"],
-        function: Callable[[EventObject], Any],
+        function: Callable[[InputEvent], Any],
     ):
         """Removes a function `f(x)` from
         the list of functions listening to `event`'s realisation. Raises errors if function or event is nonexistent.
