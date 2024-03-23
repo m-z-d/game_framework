@@ -62,13 +62,20 @@ class KeyboardInputAgent:  # TODO: make sequenced mode only accessible by sendin
 
     def _loop(self) -> None:
         while True:
+            input=""
             if self.mode == "single-key":
-                input = self._sk_input()
+                input =self._sk_input()
+                if input is "":
+                    continue
+                else:
+                    for listener in self._event_listeners["SingleKeyEvent"]:
+                        listener(EventObject(value=input))
             elif self.mode == "sequence":
                 input = self._seq_input()
-            else:
-                raise
-
+                for listener in self._event_listeners["SequenceEvent"]:
+                    listener(EventObject(value=input))
+            for listener in self._event_listeners["InputEvent"]:
+                    listener(EventObject(value=input))
     def _seq_input(self) -> str:
         return input()
 
