@@ -81,7 +81,7 @@ class KeyboardInputAgent:  # TODO: make sequenced mode only accessible by sendin
             input = ""
             if self.mode == "single-key":
                 input = self._sk_input()
-                if input is "":
+                if input == "":
                     continue
                 else:
                     for listener in self._event_listeners["SingleKeyEvent"]:
@@ -99,7 +99,7 @@ class KeyboardInputAgent:  # TODO: make sequenced mode only accessible by sendin
     def _sk_input_windows(self) -> str:
         from msvcrt import getch
 
-        return getch().decode(encoding="ascii", errors="ignore")
+        return getch().decode(encoding="utf-8", errors="ignore")
 
     def _sk_input_linux(
         self,
