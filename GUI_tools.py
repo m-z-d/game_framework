@@ -2,6 +2,8 @@ from typing import Any, Literal
 from rendering_pipeline import Sprite
 from input_pipeline import KeyboardInputAgent
 
+"""Module for UI rendering, outside of the main contents of the game"""
+
 
 class PositionVector:
     x: int
@@ -82,6 +84,8 @@ class PositionVector:
 
 
 class GUIElement:
+    """Graphical element to be displayed statically on the screen. base class for all overlays.\n
+    initialize with a parent `GUIElement` (or `GUIRoot`), a unique name, displayable sprite and a position relative to its parent."""
     def __init__(
         self,
         parent,
@@ -110,5 +114,7 @@ class GUIElement:
 
 
 class GUIRoot(GUIElement):
+    """Root of the user interface. this class should only be present once per interface,
+    and have all other `GUIElement` instances be its children."""
     def __init__(self, name: str) -> None:
         super().__init__(parent=self, name=name, sprite=None,pos=(0,0))
